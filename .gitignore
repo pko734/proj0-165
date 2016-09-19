@@ -2,3 +2,5 @@
 main
 test
 benchmark
+*.exe
+*.stackdump

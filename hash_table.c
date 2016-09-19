@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include "hash_table.h"
 
+#define HT_INITIAL_SIZE 10
+
 // initialize the components of the hashtable
-void init(hashtable** ht, size_t size ) {
+void init(hashtable** ht) {
   unsigned int i;
   *ht = malloc(sizeof(hashtable));
-  (*ht)->table = malloc(sizeof(linkedlist *) * size );
-  for (i=0; i < size; i++ ) {
+  (*ht)->table = malloc(sizeof(linkedlist *) * HT_INITIAL_SIZE );
+  for (i=0; i < HT_INITIAL_SIZE; i++ ) {
     (*ht)->table[i] = NULL;
   }
-  (*ht)->size = size;
+  (*ht)->size = HT_INITIAL_SIZE;
 }
 
 // insert a key-value pair into the hash table
@@ -36,18 +38,21 @@ void put(hashtable* ht, keyType key, valType value) {
 // num_values, the caller can invoke this function again (with a larger buffer)
 // to get values that it missed during the first call. 
 int get(hashtable* ht, keyType key, valType *values, int num_values) {
-    (void) ht;
-    (void) key;
-    (void) values;
-    (void) num_values;
-    return 0;
+  unsigned int hashkey = hash(ht, key);
+  linkedlist *list = ht->table[hashkey];
+  return list ? list_get( list, key, values, num_values ) : 0;
 }
 
 // erase a key-value pair from the hash talbe
 void erase(hashtable* ht, keyType key) {
-  unsigned int i;
-  for (i=0; i < ht->size; i++ ) {
-    list_erase( &(ht->table[i]), key );
+  unsigned int hashkey = hash(ht, key);
+  linkedlist *list = ht->table[hashkey];
+  if (list) {
+    list_delete( &list, key );
+    if( list->size == 0 ) {
+      free( list );
+      ht->table[hashkey] = NULL;
+    }
   }
 }
 
@@ -86,7 +91,22 @@ void list_insert(linkedlist **list, node *node) {
   (*list)->size++;
 }
 
-void list_erase(linkedlist **list, keyType key) {
+int list_get(linkedlist *list, keyType key, valType *values, int num_values) {
+  node *this_node;
+  unsigned int found = 0;
+
+  this_node = list->head;
+  
+  while(this_node && (found < (unsigned int)num_values)) {
+    if (this_node->key == key) {
+      values[found++] = this_node->val;
+    }
+    this_node = this_node->next;
+  }
+  return found;
+}
+
+void list_delete(linkedlist **list, keyType key) {
   node *prev_node, *this_node, *tmp_node;
   this_node = (*list)->head;
   prev_node = NULL;
