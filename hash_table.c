@@ -14,6 +14,10 @@ void init(hashtable** ht) {
   (*ht)->size = HT_INITIAL_SIZE;
 }
 
+void cleanup(hashtable** ht) {
+  free( (*ht)->table );
+}
+
 // insert a key-value pair into the hash table
 void put(hashtable* ht, keyType key, valType value) {
   unsigned int hashkey = hash(ht, key);
@@ -75,7 +79,7 @@ void hash_print(hashtable *ht) {
 }
 
 void list_init(linkedlist **list) {
-  *list = malloc(sizeof(linkedlist));
+  *list = malloc(sizeof(struct linkedlist));
   (*list)->head = NULL;
   (*list)->tail = NULL;
   (*list)->size = 0;
@@ -123,6 +127,7 @@ void list_delete(linkedlist **list, keyType key) {
         (*list)->tail = prev_node;
       }
       tmp_node = this_node->next;      
+      printf( "Freeing node\n" );
       free( this_node );
       this_node = tmp_node;
       (*list)->size--;
@@ -143,7 +148,8 @@ void list_print(linkedlist *list) {
 }
 
 void node_init(node **node, keyType key, valType val) {
-  *node = malloc(sizeof(node));
+  printf( "Allocating node\n" );
+  *node = malloc(sizeof(struct node));
   (*node)->key = key;
   (*node)->val = val;
   (*node)->next = NULL;

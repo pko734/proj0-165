@@ -25,6 +25,7 @@ typedef struct hashtable {
 } hashtable;
 
 void init(hashtable** ht);
+void cleanup(hashtable** ht);
 void put(hashtable* ht, keyType key, valType value);
 int get(hashtable* ht, keyType key, valType *values, int num_values);
 void erase(hashtable* ht, keyType key);

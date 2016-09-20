@@ -24,12 +24,12 @@ int main(void) {
   put(ht, 1, 100);
   */
   //list_print( ht->table[0] );
-  hash_print( ht );
+  //hash_print( ht );
 
   //list_erase( &(ht->table[0]), 1 );
   erase(ht, 1);
 
-  hash_print( ht );
+  //hash_print( ht );
   
   int num_values = 1;
 
@@ -48,6 +48,9 @@ int main(void) {
 
   erase(ht, 0);
 
+  cleanup(&ht);
+
   free(ht);
+
   return 0;
 }
