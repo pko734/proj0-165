@@ -31,6 +31,7 @@ void cleanup(hashtable** ht);
 void put(hashtable* ht, keyType key, valType value);
 int get(hashtable* ht, keyType key, valType *values, int num_values);
 void erase(hashtable* ht, keyType key);
+void optimize(hashtable** ht);
 
 unsigned int hash(hashtable *ht, keyType key);
 void hash_print( hashtable *ht );

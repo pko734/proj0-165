@@ -70,6 +70,10 @@ unsigned int hash( hashtable *ht, keyType key) {
   return key % ht->size;
 }
 
+void optimize(hashtable** ht) {
+  (void)ht;
+}
+
 void hash_print(hashtable *ht) {
   printf("*********************\n");
   unsigned int i;
