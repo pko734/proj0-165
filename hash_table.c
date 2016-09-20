@@ -8,6 +8,8 @@ void init(hashtable** ht) {
   init_custom(ht, HT_INITIAL_SIZE);
 }
 
+// a custom init method that lets you specify the number of
+// hashtable buckets.
 void init_custom(hashtable** ht, unsigned int buckets) {
   unsigned int i;
   *ht = malloc(sizeof(hashtable));
@@ -19,6 +21,7 @@ void init_custom(hashtable** ht, unsigned int buckets) {
   (*ht)->size = buckets;
 }
 
+// frees the space allocated for the hash table in init.
 void cleanup(hashtable** ht) {
   free( (*ht)->table );
 }
@@ -53,7 +56,7 @@ int get(hashtable* ht, keyType key, valType *values, int num_values) {
   return (list) ? list_get( list, key, values, num_values ) : 0;
 }
 
-// erase a key-value pair from the hash talbe
+// erase a key-value pair from the hash table
 void erase(hashtable* ht, keyType key) {
   unsigned int hashkey = hash(ht, key);
   linkedlist *list = ht->table[hashkey];
@@ -66,14 +69,17 @@ void erase(hashtable* ht, keyType key) {
   }
 }
 
+// hash function
 unsigned int hash( hashtable *ht, keyType key) {
   return key % ht->size;
 }
 
+// optimize the hashtable
 void optimize(hashtable** ht) {
   (void)ht;
 }
 
+// print contents of the hash table for debugging
 void hash_print(hashtable *ht) {
   printf("*********************\n");
   unsigned int i;
@@ -87,6 +93,7 @@ void hash_print(hashtable *ht) {
   }
 }
 
+// init an empty linked list.
 void list_init(linkedlist **list) {
   *list = malloc(sizeof(struct linkedlist));
   (*list)->head = NULL;
@@ -94,6 +101,7 @@ void list_init(linkedlist **list) {
   (*list)->size = 0;
 }
 
+// insert node into list
 void list_insert(linkedlist **list, node *node) {
   if((*list)->size == 0) {
     (*list)->head = node;
@@ -104,6 +112,8 @@ void list_insert(linkedlist **list, node *node) {
   (*list)->size++;
 }
 
+// get values from key in linked list, following same
+// requirements as "get" above.
 int list_get(linkedlist *list, keyType key, valType *values, int num_values) {
   node *this_node;
   unsigned int found = 0;
@@ -119,6 +129,8 @@ int list_get(linkedlist *list, keyType key, valType *values, int num_values) {
   return found;
 }
 
+// delete any nodes from the list containing key.
+// return the number of nodes deleted.
 int list_delete(linkedlist **list, keyType key) {
   node *prev_node, *this_node, *tmp_node;
   this_node = (*list)->head;
@@ -149,6 +161,7 @@ int list_delete(linkedlist **list, keyType key) {
   return num_deleted;
 }
 
+// print a linked list for debugging
 void list_print(linkedlist *list) {
   node *node = list->head;
   printf( "(%d) ", (int)list->size );
@@ -159,6 +172,7 @@ void list_print(linkedlist *list) {
   printf( "NULL\n" );
 }
 
+// initialize an empty node.
 void node_init(node **node, keyType key, valType val) {
   *node = malloc(sizeof(struct node));
   (*node)->key = key;
