@@ -8,7 +8,7 @@
 int main(void) {
 
   hashtable *ht = NULL;
-  init(&ht, 10);
+  init(&ht);
 
   int key = 0;
   int value = -1;
