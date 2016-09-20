@@ -21,10 +21,12 @@ typedef struct linkedlist {
 typedef struct hashtable {
   // define the components of the hash table here (e.g. the array, bookkeeping for number of elements, etc)
   size_t size;
+  size_t pairs;
   linkedlist **table;
 } hashtable;
 
 void init(hashtable** ht);
+void init_custom(hashtable** ht, unsigned int buckets);
 void cleanup(hashtable** ht);
 void put(hashtable* ht, keyType key, valType value);
 int get(hashtable* ht, keyType key, valType *values, int num_values);
@@ -36,7 +38,7 @@ void hash_print( hashtable *ht );
 void list_init(linkedlist **list);
 void list_insert(linkedlist **list, node *node);
 int list_get(linkedlist *list, keyType key, valType *values, int num_values);
-void list_delete(linkedlist **list, keyType key);
+int list_delete(linkedlist **list, keyType key);
 void list_print(linkedlist *list);
 
 void node_init(node **node, keyType key, valType val);

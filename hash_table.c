@@ -1,17 +1,22 @@
 #include <stdio.h>
 #include "hash_table.h"
 
-#define HT_INITIAL_SIZE 10
+#define HT_INITIAL_SIZE 17
 
 // initialize the components of the hashtable
 void init(hashtable** ht) {
+  init_custom(ht, HT_INITIAL_SIZE);
+}
+
+void init_custom(hashtable** ht, unsigned int buckets) {
   unsigned int i;
   *ht = malloc(sizeof(hashtable));
-  (*ht)->table = malloc(sizeof(linkedlist *) * HT_INITIAL_SIZE );
-  for (i=0; i < HT_INITIAL_SIZE; i++ ) {
+  (*ht)->table = malloc(sizeof(linkedlist *) * buckets );
+  for (i=0; i < buckets; i++ ) {
     (*ht)->table[i] = NULL;
   }
-  (*ht)->size = HT_INITIAL_SIZE;
+  (*ht)->pairs = 0;
+  (*ht)->size = buckets;
 }
 
 void cleanup(hashtable** ht) {
@@ -30,8 +35,9 @@ void put(hashtable* ht, keyType key, valType value) {
     list_init(&list);
   }
   
-  list_insert(&list, new_node);  
+  list_insert(&list, new_node);
   ht->table[hashkey] = list;
+  ht->pairs++;
 }
 
 // get entries with a matching key and stores the corresponding values in the
@@ -44,7 +50,7 @@ void put(hashtable* ht, keyType key, valType value) {
 int get(hashtable* ht, keyType key, valType *values, int num_values) {
   unsigned int hashkey = hash(ht, key);
   linkedlist *list = ht->table[hashkey];
-  return list ? list_get( list, key, values, num_values ) : 0;
+  return (list) ? list_get( list, key, values, num_values ) : 0;
 }
 
 // erase a key-value pair from the hash talbe
@@ -52,7 +58,7 @@ void erase(hashtable* ht, keyType key) {
   unsigned int hashkey = hash(ht, key);
   linkedlist *list = ht->table[hashkey];
   if (list) {
-    list_delete( &list, key );
+    ht->pairs -= list_delete( &list, key );
     if( list->size == 0 ) {
       free( list );
       ht->table[hashkey] = NULL;
@@ -68,13 +74,12 @@ void hash_print(hashtable *ht) {
   printf("*********************\n");
   unsigned int i;
   for(i=0; i < ht->size; i++) {
-    printf("hashkey: %d\n", i);
+    printf("bucket %d: ", i);
     if (ht->table[i] == NULL) {
       printf("EMPTY\n");
     } else {
       list_print( ht->table[i] );
     }
-    printf("\n");
   }
 }
 
@@ -110,11 +115,12 @@ int list_get(linkedlist *list, keyType key, valType *values, int num_values) {
   return found;
 }
 
-void list_delete(linkedlist **list, keyType key) {
+int list_delete(linkedlist **list, keyType key) {
   node *prev_node, *this_node, *tmp_node;
   this_node = (*list)->head;
   prev_node = NULL;
   tmp_node  = NULL;
+  unsigned int num_deleted = 0;
   while(this_node) {
     if (this_node->key == key) {
       if (prev_node) {
@@ -130,18 +136,20 @@ void list_delete(linkedlist **list, keyType key) {
       free( this_node );
       this_node = tmp_node;
       (*list)->size--;
+      num_deleted++;
     } else {
       prev_node = this_node;
       this_node = this_node->next;
     }
-  }  
+  }
+  return num_deleted;
 }
 
 void list_print(linkedlist *list) {
   node *node = list->head;
-  printf( "list size: %d\n", (int)list->size );
+  printf( "(%d) ", (int)list->size );
   while( node ) {
-    printf( "[ key: %d, val: %d ] -> ", node->key, node->val );
+    printf( "[%d,%d] -> ", node->key, node->val );
     node = node->next;
   }
   printf( "NULL\n" );

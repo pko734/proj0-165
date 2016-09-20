@@ -48,6 +48,8 @@ int main(void) {
 
   erase(ht, 0);
 
+  printf( "pairs: %lu\n", ht->pairs );
+
   cleanup(&ht);
 
   free(ht);
