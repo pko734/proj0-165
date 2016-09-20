@@ -1,0 +1,34 @@
+* First of all, I apologize in advance, it's been over 10 years since I worked seriously in C.
+
+* Multiple key/value pairs per node implementation
+
+* Hash table implementation when keyType changes?
+
+* Bucket size selection / upper limit?  Must be prime?
+
+* For the hash resize, I'm considering writing an optimize(hastable** ht) function,
+and just calling that in main.  Is that ok, or is it supposed to be more "automatic" somehow?
+
+* This issue:
+
+typedef struct node {
+  keyType key;
+  valType val;
+  struct node *next;
+} node;
+
+void node_init(node **node, keyType key, valType val) {
+  *node = malloc(sizeof(node));
+  (*node)->key = key;
+  (*node)->val = val;
+  (*node)->next = NULL; <-- valgrind complains, why?
+}
+
+void node_init(node **node, keyType key, valType val) {
+  *node = malloc(sizeof(struct node));
+  (*node)->key = key;
+  (*node)->val = val;
+  (*node)->next = NULL; <-- valgrind complains does not complain, why?
+}
+
+
