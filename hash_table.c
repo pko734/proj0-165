@@ -127,7 +127,6 @@ void list_delete(linkedlist **list, keyType key) {
         (*list)->tail = prev_node;
       }
       tmp_node = this_node->next;      
-      printf( "Freeing node\n" );
       free( this_node );
       this_node = tmp_node;
       (*list)->size--;
@@ -142,13 +141,13 @@ void list_print(linkedlist *list) {
   node *node = list->head;
   printf( "list size: %d\n", (int)list->size );
   while( node ) {
-    printf( "key: %d, val: %d, next: %p\n", node->key, node->val, node->next );
+    printf( "[ key: %d, val: %d ] -> ", node->key, node->val );
     node = node->next;
   }
+  printf( "NULL\n" );
 }
 
 void node_init(node **node, keyType key, valType val) {
-  printf( "Allocating node\n" );
   *node = malloc(sizeof(struct node));
   (*node)->key = key;
   (*node)->val = val;

@@ -13,8 +13,9 @@ int main(void) {
   int key = 0;
   int value = -1;
 
+  hash_print( ht );
+
   put(ht, key, value);
-  /*
   put(ht, 2, 2);
   put(ht, 3, 2);
   put(ht, 4, 3);
@@ -22,9 +23,8 @@ int main(void) {
   put(ht, 6, 10);
   put(ht, 7, 2);
   put(ht, 1, 100);
-  */
-  //list_print( ht->table[0] );
-  //hash_print( ht );
+
+  hash_print( ht );
 
   //list_erase( &(ht->table[0]), 1 );
   erase(ht, 1);
